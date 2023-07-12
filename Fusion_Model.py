@@ -1,7 +1,8 @@
 '''
 The code is used to merge different results to obtain a new result.
-For example, we can utilize 'Flickr30K_DynamicTopK_P_3_sim.npy'(HGMN w/o S) and 'Flickr30K_DynamicTopK_S_3_sim.npy'(HGMN w/o P)
-to obtain 'Flickr30K_DynamicTopK_S+P_3_sim.npy'(HGMN).
+For example, we can utilize 'i2t_16_sim.npy'(CIBRN w/o t2i) and 't2i_16_sim.npy'(CIBRN w/o i2t)
+to obtain 'i2t
++t2i_16_sim.npy'(CIBRN).
 
 '''
 
