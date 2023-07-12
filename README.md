@@ -19,3 +19,14 @@ t2i: 502.8
 Image to text: 77.4  94.3  97.7
 Text to image: 59.2  84.1  90.1
 ```
+## Download Data 
+We utilize the image feature created by SCAN, downloaded [here](https://github.com/kuanghuei/SCAN). Some related text data can be found in the 'data' folder of the project (for Flickr30K).
+
+## Training 
+```bash
+python train.py 
+```
+## Testing
+```bash
+python test.py
+```
