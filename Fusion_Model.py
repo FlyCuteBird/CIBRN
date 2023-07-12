@@ -1,13 +1,14 @@
 '''
 The code is used to merge different results to obtain a new result.
-For example, we can utilize 't2i_16_sim.npy'(CIBRN w/o i2t) and 'i2t_16_sim.npy'(CIBRN w/o t2i)
+Taking Flickr30K as an example, we can utilize 't2i_16_sim.npy'(CIBRN w/o i2t) and 'i2t_16_sim.npy'(CIBRN w/o t2i)
 to obtain 't2i+i2t_16_sim.npy'(CIBRN).
 
 '''
 
 import numpy as np
-def i2t(im_len, sims, npts=None, return_ranks=False):
 
+
+def i2t(im_len, sims, npts=None, return_ranks=False):
     npts = im_len
     ranks = np.zeros(npts)
     top1 = np.zeros(npts)
@@ -35,7 +36,6 @@ def i2t(im_len, sims, npts=None, return_ranks=False):
 
 
 def t2i(im_len, sims, npts=None, return_ranks=False):
-
     npts = im_len
     ranks = np.zeros(5 * npts)
     top1 = np.zeros(5 * npts)
@@ -63,63 +63,55 @@ def t2i(im_len, sims, npts=None, return_ranks=False):
 
 if __name__ == '__main__':
     # reading  the similarity matrix
-    sim_1 = np.load('./t2i_16_sim.npy')
-    sim_2 = np.load('./i2t_16_sim.npy')
-
-    ima_len, caps_len = sim_1.shape
-    Com_results = []
+    # coco or flickr30k
+    dataset_name = 'flickr30k'
     isfold5 = False
-    if not isfold5:
+    mid_result = []
+    results = []
+    if dataset_name == 'coco' and isfold5 == True:
+        for i in range(5):
+            print(i)
+            sim1 = np.load('./0.1/t2i_16_{}_sim.npy'.format(i))
+            sim2 = np.load('./0.1/i2t_16_{}_sim.npy'.format(i))
+            ima_len, caps_len = sim1.shape
+            for j in range(101):
+                alpha = j / 100.0
+                sims = alpha * sim1 + (1-alpha) * sim2
+                r, rt = i2t(ima_len, sims, return_ranks=True)
+                ri, rti = t2i(ima_len, sims, return_ranks=True)
+                ar = (r[0] + r[1] + r[2]) / 3
+                ari = (ri[0] + ri[1] + ri[2]) / 3
+                rsum = r[0] + r[1] + r[2] + ri[0] + ri[1] + ri[2]
+                mid_result.append((rsum, r[0], r[1], r[2], ri[0], ri[1], ri[2], i))
+            print(max(mid_result))
+            results.append(list(max(mid_result)))
+            mid_result = []
+        mean_metrics = tuple(np.array(results).mean(axis=0).flatten())
+        print(len(mean_metrics))
+        print(mean_metrics)
+        print("rsum: %.1f" % (mean_metrics[0]))
+        print("Image to text: %.1f %.1f %.1f" %
+              mean_metrics[1:4])
+        print("Text to image: %.1f %.1f %.1f" %
+              mean_metrics[4:7])
+    else:
+        sim1 = np.load('./t2i_16_sim.npy')
+        sim2 = np.load('./i2t_16_sim.npy')
+        ima_len, caps_len = sim1.shape
         for i in range(101):
-            alpha = i/100.0
+            alpha = i / 100.0
             print(alpha)
-            sims = alpha*sim_1 + (1.0-alpha)*sim_2
-
+            sims = alpha * sim1 + (1 - alpha) * sim2
             r, rt = i2t(ima_len, sims, return_ranks=True)
             ri, rti = t2i(ima_len, sims, return_ranks=True)
             ar = (r[0] + r[1] + r[2]) / 3
             ari = (ri[0] + ri[1] + ri[2]) / 3
             rsum = r[0] + r[1] + r[2] + ri[0] + ri[1] + ri[2]
-            Com_results.append((rsum, r[0], r[1], r[2], ri[0], ri[1], ri[2], i))
-           # Com_results.append(rsum)
-
-    # # MSCOCO 5K
-    else:
-        results = []
-        for i in range(5):
-            sim_shard = (sim_1[i] + sim_2[i]) / 2
-            r, rt0 = i2t(ima_len, sim_shard, return_ranks=True)
-            print("Image to text: %.1f, %.1f, %.1f, %.1f, %.1f" % r)
-            ri, rti0 = t2i(ima_len, sim_shard, return_ranks=True)
-            print("Text to image: %.1f, %.1f, %.1f, %.1f, %.1f" % ri)
-
-            if i == 0:
-                rt, rti = rt0, rti0
-            ar = (r[0] + r[1] + r[2]) / 3
-            ari = (ri[0] + ri[1] + ri[2]) / 3
-            rsum = r[0] + r[1] + r[2] + ri[0] + ri[1] + ri[2]
-            print("rsum: %.1f ar: %.1f ari: %.1f" % (rsum, ar, ari))
-            results += [list(r) + list(ri) + [ar, ari, rsum]]
-
-        print("-----------------------------------")
-        print("Mean metrics: ")
-        mean_metrics = tuple(np.array(results).mean(axis=0).flatten())
-        print("rsum: %.1f" % (mean_metrics[10] * 6))
-        print("Average i2t Recall: %.1f" % mean_metrics[11])
-        print("Image to text: %.1f %.1f %.1f %.1f %.1f" %
-              mean_metrics[:5])
-        print("Average t2i Recall: %.1f" % mean_metrics[12])
-        print("Text to image: %.1f %.1f %.1f %.1f %.1f" %
-              mean_metrics[5:10])
-
-    # with open('result.txt', 'w') as f:
-    #     for i in range(len(Com_results)):
-    #         f.write(str(i/100.0)+','+ str(Com_results[i]) + '\r')
+            mid_result.append((rsum, r[0], r[1], r[2], ri[0], ri[1], ri[2], i))
+        print(mid_result)
+        print(max(mid_result))
 
 
-    print(Com_results)
-    
-    # obtain the best results and the fusion parameter alpha 
-    
-    print(max(Com_results))
+
+
 
