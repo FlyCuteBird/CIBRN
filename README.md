@@ -9,7 +9,7 @@ The following dependencies are recommended.
 * torchaudio==0.7.0
 * pytorch-pretrained-bert==0.6.2
   
-##Pretrained model
+## Pretrained model
 If you don't want to train from scratch, you can download the pre-trained CIBRN model  from [here](https://drive.google.com/drive/folders/1eddbVAGbjHvofX96FuY4Sq7YcJTmuMhV?usp=drive_link)(for Flickr30K)
 ```bash
 i2t: 488.0
