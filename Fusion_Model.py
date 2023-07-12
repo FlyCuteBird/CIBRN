@@ -63,8 +63,8 @@ def t2i(im_len, sims, npts=None, return_ranks=False):
 
 if __name__ == '__main__':
     # reading  the similarity matrix
-    sim_1 = np.load('./data/TopK_V2T_NTN.npy')
-    sim_2 = np.load('./data/TopK_V2T_P.npy')
+    sim_1 = np.load('./t2i_16_sim.npy')
+    sim_2 = np.load('./i2t_16_sim.npy')
 
     ima_len, caps_len = sim_1.shape
     Com_results = []

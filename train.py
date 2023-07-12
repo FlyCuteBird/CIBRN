@@ -15,13 +15,6 @@ from evaluation import i2t, t2i, AverageMeter, LogCollector, encode_data, shard_
 import logging
 import tensorboard_logger as tb_logger
 
-torch.backends.cudnn.enabled = True
-torch.backends.cudnn.benchmark = True
-
-random.seed(2022)
-torch.manual_seed(2022)
-np.random.seed(2022)
-
 def main():
 
     opt = Parser.parse_opt()
