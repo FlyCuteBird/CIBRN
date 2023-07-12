@@ -1,8 +1,7 @@
 '''
 The code is used to merge different results to obtain a new result.
-For example, we can utilize 'i2t_16_sim.npy'(CIBRN w/o t2i) and 't2i_16_sim.npy'(CIBRN w/o i2t)
-to obtain 'i2t
-+t2i_16_sim.npy'(CIBRN).
+For example, we can utilize 't2i_16_sim.npy'(CIBRN w/o i2t) and 'i2t_16_sim.npy'(CIBRN w/o t2i)
+to obtain 't2i+i2t_16_sim.npy'(CIBRN).
 
 '''
 
